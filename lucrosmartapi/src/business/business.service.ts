@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { Body, Injectable, Param } from '@nestjs/common';
 import { CreateBusinessDto } from './dto/create-business.dto';
 import { UpdateBusinessDto } from './dto/update-business.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Business } from './business.schema';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class BusinessService {
+  constructor(
+    @InjectModel(Business.name) private readonly businessModel: Model<Business>,
+  ) {}
+
   create(createBusinessDto: CreateBusinessDto) {
-    return 'This action adds a new business';
+    const newBusiness = new this.businessModel(createBusinessDto);
+    return newBusiness.save();
   }
 
   findAll() {
-    return `This action returns all business`;
+    return `This action returns all business from that user`;
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} business`;
+  findOne(@Param('id') id: string) {
+    return this.businessModel.findById(id).exec();
   }
 
-  update(id: string, updateBusinessDto: UpdateBusinessDto) {
-    return `This action updates a #${id} business`;
+  update(
+    @Param('id') id: string,
+    @Body() updateBusinessDto: UpdateBusinessDto,
+  ) {
+    return this.businessModel
+      .findByIdAndUpdate(id, updateBusinessDto, { new: true })
+      .exec();
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} business`;
+  remove(@Param('id') id: string) {
+    return this.businessModel.findByIdAndDelete(id).exec();
   }
 }

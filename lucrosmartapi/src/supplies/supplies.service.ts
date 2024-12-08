@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Body, Injectable, Param } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateSupplyDto } from './dto/create-supply.dto';
@@ -20,20 +20,20 @@ export class SuppliesService {
     return this.supplyModel.find().exec();
   }
 
-  async findOne(id: string): Promise<Supply | null> {
+  async findOne(@Param('id') id: string): Promise<Supply | null> {
     return this.supplyModel.findById(id).exec();
   }
 
   async update(
-    id: string,
-    updateSupplyDto: UpdateSupplyDto,
+    @Param('id') id: string,
+    @Body() updateSupplyDto: UpdateSupplyDto,
   ): Promise<Supply | null> {
     return this.supplyModel
       .findByIdAndUpdate(id, updateSupplyDto, { new: true })
       .exec();
   }
 
-  async remove(id: string): Promise<Supply | null> {
+  async remove(@Param('id') id: string): Promise<Supply | null> {
     return this.supplyModel.findByIdAndDelete(id).exec();
   }
 }

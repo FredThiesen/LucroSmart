@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Body, Injectable, Param } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './products.schema';
@@ -11,7 +11,7 @@ export class ProductsService {
     @InjectModel(Product.name) private readonly productModel: Model<Product>, // Injeta o modelo do Product
   ) {}
 
-  create(createProductDto: CreateProductDto) {
+  create(@Body() createProductDto: CreateProductDto) {
     const newProduct = new this.productModel(createProductDto);
     return newProduct.save();
   }
@@ -20,17 +20,17 @@ export class ProductsService {
     return this.productModel.find().exec();
   }
 
-  findOne(id: string) {
+  findOne(@Param('id') id: string) {
     return this.productModel.findById(id).exec();
   }
 
-  update(id: string, updateProductDto: UpdateProductDto) {
+  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     return this.productModel
       .findByIdAndUpdate(id, updateProductDto, { new: true })
       .exec();
   }
 
-  remove(id: string) {
+  remove(@Param('id') id: string) {
     return this.productModel.findByIdAndDelete(id).exec();
   }
 }
