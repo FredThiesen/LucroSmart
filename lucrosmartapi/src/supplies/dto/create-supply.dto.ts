@@ -10,7 +10,7 @@ export class CreateSupplyDto {
   price: number; // Preço do insumo por unidade
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsString()
   unit: string; // Quantidade inicial do insumo
 
   @IsOptional()

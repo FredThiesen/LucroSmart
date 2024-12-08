@@ -12,7 +12,7 @@ export class UpdateSupplyDto extends PartialType(CreateSupplyDto) {
   price?: number; // Preço atualizado do insumo (opcional)
 
   @IsOptional()
-  @IsNumber()
+  @IsString()
   unit?: string; // Unidade atualizada do insumo (opcional)
 
   @IsOptional()
