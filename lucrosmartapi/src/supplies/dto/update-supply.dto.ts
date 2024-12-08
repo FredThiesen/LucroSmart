@@ -5,17 +5,17 @@ import { IsOptional, IsString, IsNumber } from 'class-validator';
 export class UpdateSupplyDto extends PartialType(CreateSupplyDto) {
   @IsOptional()
   @IsString()
-  name?: string; // Nome atualizado do insumo (opcional)
+  name?: string;
 
   @IsOptional()
   @IsNumber()
-  price?: number; // Preço atualizado do insumo (opcional)
+  price?: number;
 
   @IsOptional()
   @IsString()
-  unit?: string; // Unidade atualizada do insumo (opcional)
+  unit?: string;
 
   @IsOptional()
   @IsString()
-  description?: string; // Descrição atualizada do insumo (opcional)
+  description?: string;
 }

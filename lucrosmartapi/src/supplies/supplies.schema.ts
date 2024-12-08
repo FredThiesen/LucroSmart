@@ -16,9 +16,6 @@ export class Supply {
 
   @Prop()
   description: string;
-
-  @Prop()
-  userId: string;
 }
 
 export const SupplySchema = SchemaFactory.createForClass(Supply);
