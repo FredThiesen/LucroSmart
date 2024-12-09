@@ -18,7 +18,10 @@ export class Sale {
   @Prop()
   unit: string;
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] })
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+    required: true,
+  })
   products: Product[];
 }
 
