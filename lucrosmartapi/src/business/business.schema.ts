@@ -19,7 +19,6 @@ export class Business {
 
   @Prop({
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    required: true,
   })
   members: User[];
 

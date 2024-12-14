@@ -37,6 +37,6 @@ export class SalesController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.salesService.remove(+id);
+    return this.salesService.remove(id);
   }
 }

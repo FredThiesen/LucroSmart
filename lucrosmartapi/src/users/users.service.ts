@@ -11,9 +11,14 @@ export class UsersService {
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    const newUser = new this.userModel(createUserDto);
-    return newUser.save();
+  create(@Body() createUserDto: CreateUserDto) {
+    try {
+      const newUser = new this.userModel(createUserDto);
+      newUser.save();
+      return newUser;
+    } catch (error) {
+      throw new Error(`Error creating user: ${error.message}`);
+    }
   }
 
   findOne(@Param('id') id: string) {

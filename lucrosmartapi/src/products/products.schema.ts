@@ -18,7 +18,6 @@ export class Product {
 
   @Prop({
     type: { type: mongoose.Schema.Types.ObjectId, ref: 'Business' },
-    required: true,
   })
   business: Business;
 
