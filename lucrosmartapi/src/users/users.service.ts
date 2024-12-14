@@ -21,15 +21,21 @@ export class UsersService {
     }
   }
 
-  findOne(@Param('id') id: string) {
+  findOne(id: string) {
     return this.userModel.findById(id).exec();
   }
 
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  update(id: string, updateUserDto: UpdateUserDto) {
     return this.userModel.findByIdAndUpdate(id, updateUserDto).exec();
   }
 
-  remove(@Param('id') id: string) {
+  remove(id: string) {
     return this.userModel.findByIdAndDelete(id).exec();
+  }
+
+  findByEmailOrId(identifier: string) {
+    return this.userModel
+      .findOne({ $or: [{ email: identifier }, { id: identifier }] })
+      .exec();
   }
 }
