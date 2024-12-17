@@ -1,7 +1,7 @@
-import { Body, HttpException, Injectable, Res } from '@nestjs/common';
+import { Body, HttpException, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AuthService {
@@ -24,9 +24,24 @@ export class AuthService {
     if (!user) {
       throw new HttpException('Invalid credentials', 401);
     }
+
     const payload = { username: user.username, sub: user.userId };
+    const accessToken = this.jwtService.sign(payload, { expiresIn: '60s' });
+
+    const refreshToken = uuidv4(); // Gera um UUID para o refresh token
+    await this.usersService.saveRefreshToken(user._id, refreshToken); // Salve no banco de dados
+
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: accessToken,
+      refresh_token: refreshToken,
     };
+  }
+
+  async validateRefreshToken(refreshToken: string) {
+    const user = await this.usersService.findByRefreshToken(refreshToken);
+    if (!user) {
+      throw new HttpException('Invalid refresh token', 401);
+    }
+    return user;
   }
 }

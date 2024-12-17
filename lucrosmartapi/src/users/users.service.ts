@@ -1,9 +1,9 @@
-import { Body, Injectable, Param } from '@nestjs/common';
+import { Body, HttpException, Injectable, Param } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './users.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Mongoose } from 'mongoose';
 
 @Injectable()
 export class UsersService {
@@ -37,5 +37,19 @@ export class UsersService {
     return this.userModel
       .findOne({ $or: [{ email: identifier }, { id: identifier }] })
       .exec();
+  }
+
+  async saveRefreshToken(id: string, refreshToken: string) {
+    const user = await this.userModel.findById(id).exec();
+    if (!user) {
+      throw new HttpException('User not found', 404);
+    }
+
+    user.refreshToken = refreshToken;
+    await user.save();
+  }
+
+  async findByRefreshToken(refreshToken: string) {
+    return this.userModel.findOne({ where: { refreshToken } });
   }
 }
