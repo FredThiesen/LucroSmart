@@ -1,7 +1,6 @@
 import { Body, HttpException, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AuthService {
@@ -10,30 +9,33 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(identifier: string, pass: string): Promise<any> {
-    const user = await this.usersService.findByEmailOrId(identifier);
+  async validateUser(email: string, pass: string): Promise<any> {
+    const user = await this.usersService.findByEmail(email);
     if (user && user.password === pass) {
-      const { password, ...result } = user;
-      return result;
+      return user;
     }
     return null;
   }
 
-  async login(@Body() data: any) {
-    const user = await this.validateUser(data.email, data.password);
+  async login(email: string, password: string) {
+    const user = await this.validateUser(email, password);
     if (!user) {
       throw new HttpException('Invalid credentials', 401);
     }
-
     const payload = { username: user.username, sub: user.userId };
     const accessToken = this.jwtService.sign(payload, { expiresIn: '60s' });
 
-    const refreshToken = uuidv4(); // Gera um UUID para o refresh token
-    await this.usersService.saveRefreshToken(user._id, refreshToken); // Salve no banco de dados
+    //check if user has a refresh token and if it is valid. If not, create a new one
+    if (!user.refreshToken) {
+      const refreshToken = this.jwtService.sign(payload, {
+        expiresIn: '7d',
+        secret: process.env.JWT_REFRESH_SECRET,
+      });
+      await this.usersService.saveRefreshToken(user._id, refreshToken); // Salve no banco de dados
+    }
 
     return {
       access_token: accessToken,
-      refresh_token: refreshToken,
     };
   }
 

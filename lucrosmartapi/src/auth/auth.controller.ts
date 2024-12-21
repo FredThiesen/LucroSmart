@@ -21,8 +21,8 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  async login(@Body() data: AuthLoginDto) {
-    return this.authService.login(data);
+  login(@Body() data: AuthLoginDto) {
+    return this.authService.login(data.email, data.password);
   }
 
   @UseGuards(JwtAuthGuard)
